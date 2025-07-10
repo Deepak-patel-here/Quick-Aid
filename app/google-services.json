@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "268727523559",
+    "project_id": "quick-aid-95919",
+    "storage_bucket": "quick-aid-95919.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:268727523559:android:6ab9c5ac6bc7b3fe6e2a42",
+        "android_client_info": {
+          "package_name": "com.deepakjetpackcompose.quickaid"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBGjmjs4uFl-74rimMjf4MhHJqKVTc-8EQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

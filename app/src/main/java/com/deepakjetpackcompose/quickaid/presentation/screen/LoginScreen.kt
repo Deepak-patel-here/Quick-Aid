@@ -1,6 +1,8 @@
 package com.deepakjetpackcompose.quickaid.presentation.screen
 
-
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -25,6 +27,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,10 +50,14 @@ import com.deepakjetpackcompose.quickaid.R
 import com.deepakjetpackcompose.quickaid.domain.navigation.NavigationHelper
 import com.deepakjetpackcompose.quickaid.presentation.components.AuthText
 import com.deepakjetpackcompose.quickaid.presentation.components.TextFieldAuth
+import com.deepakjetpackcompose.quickaid.presentation.viewmodel.AuthState
 import com.deepakjetpackcompose.quickaid.presentation.viewmodel.AuthViewModel
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 
 @Composable
 fun LoginScreen( navController: NavController, modifier: Modifier = Modifier, authViewModel: AuthViewModel= hiltViewModel()) {
+
     val input = remember { mutableStateOf("") }
     val passWord = remember { mutableStateOf("") }
     val passwordFocus = remember { FocusRequester() }
@@ -58,7 +65,21 @@ fun LoginScreen( navController: NavController, modifier: Modifier = Modifier, au
     val keyboardController = LocalSoftwareKeyboardController.current
 
     val context = LocalContext.current
-//    val authState = authViewModel.authState.collectAsState()
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val authState = authViewModel.authState.collectAsState()
+
+    LaunchedEffect(authState.value) {
+        if(authState.value== AuthState.Loading){
+            navController.navigate(NavigationHelper.AppScreen){
+                popUpTo(NavigationHelper.LoginScreen){inclusive=true}
+            }
+        }
+    }
+
+
+
+
+
 
     Column(
         modifier = modifier
@@ -113,9 +134,19 @@ fun LoginScreen( navController: NavController, modifier: Modifier = Modifier, au
         Spacer(Modifier.height(50.dp))
 
         Button(
-            onClick = { navController.navigate(NavigationHelper.AppScreen){
-                popUpTo(NavigationHelper.LoginScreen){inclusive=true}
-            } },
+            onClick = {
+                if(input.value.isNotEmpty() && passWord.value.isNotEmpty()){
+                    authViewModel.loginUser (email = input.value, password = passWord.value){success,msg->
+                        if(success){
+                            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+                        }else{
+                            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }else{
+                    Toast.makeText(context, "Please fill all fields", Toast.LENGTH_SHORT).show()
+                }
+             },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(53.dp),
@@ -167,6 +198,5 @@ fun LoginScreen( navController: NavController, modifier: Modifier = Modifier, au
 
 
     }
-
 
 }

@@ -1,5 +1,6 @@
 package com.deepakjetpackcompose.quickaid.presentation.screen
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,26 +20,32 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.deepakjetpackcompose.quickaid.R
 import com.deepakjetpackcompose.quickaid.domain.navigation.NavigationHelper
 import com.deepakjetpackcompose.quickaid.presentation.components.AuthText
 import com.deepakjetpackcompose.quickaid.presentation.components.TextFieldAuth
+import com.deepakjetpackcompose.quickaid.presentation.viewmodel.AuthState
+import com.deepakjetpackcompose.quickaid.presentation.viewmodel.AuthViewModel
 
 @Composable
-fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController) {
+fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController,authViewModel: AuthViewModel= hiltViewModel()) {
     val input = remember { mutableStateOf("") }
     val passWord = remember { mutableStateOf("") }
     val name=remember { mutableStateOf("") }
@@ -48,6 +55,16 @@ fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController) {
     val confirmPasswordFocus = remember { FocusRequester() }
     val scrollState = rememberScrollState()
     val keyboardController = LocalSoftwareKeyboardController.current
+    val authState=authViewModel.authState.collectAsState()
+    val context= LocalContext.current
+
+    LaunchedEffect(authState.value) {
+        if(authState.value== AuthState.Loading){
+            navController.navigate(NavigationHelper.AppScreen){
+                popUpTo(NavigationHelper.LoginScreen){inclusive=true}
+            }
+        }
+    }
 
     Column(
         modifier = modifier
@@ -139,7 +156,23 @@ fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController) {
         Spacer(Modifier.height(50.dp))
 
         Button(
-            onClick = { /*TODO*/ },
+            onClick = {
+                if(input.value.isNotEmpty() && passWord.value.isNotEmpty() && name.value.isNotEmpty() && confirmPassword.value.isNotEmpty()){
+                    if(passWord.value==confirmPassword.value){
+                        authViewModel.registerUser(name = name.value, email = input.value, password = passWord.value){success,msg->
+                            if(success){
+                                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+                            }else{
+                                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }else{
+                        Toast.makeText(context, "Password does not match", Toast.LENGTH_SHORT).show()
+                    }
+                }else {
+                    Toast.makeText(context, "Please fill all fields", Toast.LENGTH_SHORT).show()
+                }
+            },
             modifier = Modifier.fillMaxWidth().height(53.dp),
             shape = RoundedCornerShape(12.dp)
         ) {
@@ -158,8 +191,4 @@ fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController) {
 
 
     }
-
-
-
-
 }

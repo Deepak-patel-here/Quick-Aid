@@ -8,6 +8,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 
@@ -50,7 +51,8 @@ fun TextFieldAuth(
         leadingIcon = {
             Icon(
                 imageVector = leadingIcon,
-                contentDescription = null
+                contentDescription = null,
+                tint= MaterialTheme.colorScheme.primary
             )
         },
         trailingIcon = {
@@ -62,7 +64,8 @@ fun TextFieldAuth(
                         ),
                         contentDescription = null,
                         modifier = Modifier
-                            .size(25.dp)
+                            .size(25.dp),
+                        tint= MaterialTheme.colorScheme.primary
 
                     )
                 }
