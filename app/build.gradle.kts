@@ -106,4 +106,7 @@ dependencies {
 
     //lottie animation
     implementation ("com.airbnb.android:lottie-compose:6.4.0")
+
+    //contraint layout
+    implementation ("androidx.constraintlayout:constraintlayout-compose:1.0.1")
 }

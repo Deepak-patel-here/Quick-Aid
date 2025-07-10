@@ -49,6 +49,7 @@ import androidx.navigation.NavController
 import com.deepakjetpackcompose.quickaid.R
 import com.deepakjetpackcompose.quickaid.domain.navigation.NavigationHelper
 import com.deepakjetpackcompose.quickaid.presentation.components.AuthText
+import com.deepakjetpackcompose.quickaid.presentation.components.LoaderAnimationComponent
 import com.deepakjetpackcompose.quickaid.presentation.components.TextFieldAuth
 import com.deepakjetpackcompose.quickaid.presentation.viewmodel.AuthState
 import com.deepakjetpackcompose.quickaid.presentation.viewmodel.AuthViewModel
@@ -80,123 +81,131 @@ fun LoginScreen( navController: NavController, modifier: Modifier = Modifier, au
 
 
 
+    Box (modifier = Modifier.fillMaxSize()){
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .verticalScroll(scrollState)
+                .padding(horizontal = 20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .verticalScroll(scrollState)
-            .padding(horizontal = 20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-
-        Image(
-            painter = painterResource(R.drawable.nurse),
-            contentDescription = null,
-            modifier = Modifier.size(150.dp)
-        )
-        Spacer(Modifier.height(50.dp))
-
-        TextFieldAuth(
-            input = input,
-            leadingIcon = Icons.Default.Email,
-            isTrailing = false,
-            label = "Email",
-            placeholder = "Enter email here",
-            imeAction = ImeAction.Next,
-            imeMethod = {
-                passwordFocus.requestFocus()
-            },
-            trailingIcon1 = null,
-            trailingIcon2 = null,
-            isShow = true,
-
+            Image(
+                painter = painterResource(R.drawable.nurse),
+                contentDescription = null,
+                modifier = Modifier.size(150.dp)
             )
+            Spacer(Modifier.height(50.dp))
 
-        Spacer(Modifier.height(20.dp))
+            TextFieldAuth(
+                input = input,
+                leadingIcon = Icons.Default.Email,
+                isTrailing = false,
+                label = "Email",
+                placeholder = "Enter email here",
+                imeAction = ImeAction.Next,
+                imeMethod = {
+                    passwordFocus.requestFocus()
+                },
+                trailingIcon1 = null,
+                trailingIcon2 = null,
+                isShow = true,
+
+                )
+
+            Spacer(Modifier.height(20.dp))
 
 
-        TextFieldAuth(
-            input = passWord,
-            leadingIcon = Icons.Default.Lock,
-            isTrailing = true,
-            label = "Password",
-            placeholder = "Enter Password here",
-            imeAction = ImeAction.Done,
-            imeMethod = {
-                keyboardController?.hide()
-            },
-            trailingIcon1 = R.drawable.hide,
-            trailingIcon2 = R.drawable.show,
-            isShow = false,
-            modifier = Modifier.focusRequester(passwordFocus)
-        )
-        Spacer(Modifier.height(50.dp))
+            TextFieldAuth(
+                input = passWord,
+                leadingIcon = Icons.Default.Lock,
+                isTrailing = true,
+                label = "Password",
+                placeholder = "Enter Password here",
+                imeAction = ImeAction.Done,
+                imeMethod = {
+                    keyboardController?.hide()
+                },
+                trailingIcon1 = R.drawable.hide,
+                trailingIcon2 = R.drawable.show,
+                isShow = false,
+                modifier = Modifier.focusRequester(passwordFocus)
+            )
+            Spacer(Modifier.height(50.dp))
 
-        Button(
-            onClick = {
-                if(input.value.isNotEmpty() && passWord.value.isNotEmpty()){
-                    authViewModel.loginUser (email = input.value, password = passWord.value){success,msg->
-                        if(success){
-                            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
-                        }else{
-                            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+            Button(
+                onClick = {
+                    if (input.value.isNotEmpty() && passWord.value.isNotEmpty()) {
+                        authViewModel.loginUser(
+                            email = input.value,
+                            password = passWord.value
+                        ) { success, msg ->
+                            if (success) {
+                                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+                            }
                         }
+                    } else {
+                        Toast.makeText(context, "Please fill all fields", Toast.LENGTH_SHORT).show()
                     }
-                }else{
-                    Toast.makeText(context, "Please fill all fields", Toast.LENGTH_SHORT).show()
-                }
-             },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(53.dp),
-            shape = RoundedCornerShape(12.dp)
-        ) {
-            Text(
-                text = "Login",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold
-            )
-        }
-        Spacer(Modifier.height(20.dp))
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-        ) {
-            Divider(
-                color = Color.Gray,
+                },
                 modifier = Modifier
-                    .weight(1f)
-                    .height(1.dp)
-            )
-
-            Text(
-                text = "  or Login with  ",
-                fontSize = 14.sp,
-                color = Color.Gray
-            )
-
-            Divider(
-                color = Color.Gray,
-                modifier = Modifier
-                    .weight(1f)
-                    .height(1.dp)
-            )
-        }
-
-        Spacer(Modifier.height(20.dp))
-
-
-        Spacer(Modifier.height(20.dp))
-        AuthText(text1 = "Don't have an account?", text2 = "Sign up", onClick = {
-            navController.navigate(NavigationHelper.SignUpScreen) {
-                popUpTo(NavigationHelper.LoginScreen) { inclusive = true }
+                    .fillMaxWidth()
+                    .height(53.dp),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text(
+                    text = "Login",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
             }
-        }, modifier = Modifier.fillMaxWidth())
+            Spacer(Modifier.height(20.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+            ) {
+                Divider(
+                    color = Color.Gray,
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(1.dp)
+                )
+
+                Text(
+                    text = "  or Login with  ",
+                    fontSize = 14.sp,
+                    color = Color.Gray
+                )
+
+                Divider(
+                    color = Color.Gray,
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(1.dp)
+                )
+            }
+
+            Spacer(Modifier.height(20.dp))
 
 
+            Spacer(Modifier.height(20.dp))
+            AuthText(text1 = "Don't have an account?", text2 = "Sign up", onClick = {
+                navController.navigate(NavigationHelper.SignUpScreen) {
+                    popUpTo(NavigationHelper.LoginScreen) { inclusive = true }
+                }
+            }, modifier = Modifier.fillMaxWidth())
+
+
+        }
+
+        if(authState.value== AuthState.Loading){
+            LoaderAnimationComponent()
+        }
     }
 
 }
